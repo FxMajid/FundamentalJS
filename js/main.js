@@ -37,12 +37,18 @@ btncreate.onclick = (event) => {
     });
 }
 
-//read data
+//update data
 
+//read data
 btnread.onclick = table;
+
 
 function table (){
     const tbody = document.getElementById("tbody");
+
+    while(tbody.hasChildNodes()){
+        tbody.removeChild(tbody.firstChild);
+    }
     
 getData(db.products,(data)=>{
     if(data){
@@ -52,18 +58,32 @@ getData(db.products,(data)=>{
                     td.textContent = data.price === data[value] ? `Rp. ${data[value]}` : data[value];
                 } )
             }
-            createEle = ("td",tr,td => {
-                createEle = ("i",td,i => {
-                    i.className += "fas fa-edit btnedit"; 
+            createEle("td",tr,td => {
+                createEle("i",td,i => {
+                    i.className += "fas fa-edit btnedit";
+                    i.setAttribute(`data-id`, data.id); 
+                    i.onclick = editbtn;
                 })
             })
-            createEle = ("td",tr,td => {
-                createEle = ("i",td,i => {
+            createEle("td",tr,td => {
+                createEle("i",td,i => {
                     i.className += "fas fa-trash-alt btndelete"; 
                 })
             })
         })
     }
 })
+}
+
+function editbtn(event){
+    // console.log(event.target);
+    let id = parseInt(event.target.dataset.id);
+
+    db.products.get(id, data => {
+        userid.value    = data.id || 0;
+        proname.value   = data.name||"";
+        seller.value    = data.seller||"";
+        price.value     = data.price|| "";
+    })
 }
 
