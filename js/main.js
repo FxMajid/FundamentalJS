@@ -86,4 +86,3 @@ function editbtn(event){
         price.value     = data.price|| "";
     })
 }
-
