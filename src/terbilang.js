@@ -1,59 +1,91 @@
-const arr = x => Array.from(x);
-const num = x => Number(x) || 0;
-const str = x => String(x);
-const isEmpty = xs => xs.length === 0;
-const take = n => xs => xs.slice(0,n);
-const drop = n => xs => xs.slice(n);
-const reverse = xs => xs.slice(0).reverse();
-const comp = f => g => x => f (g (x));
-const not = x => !x;
-const chunk = n => xs => isEmpty(xs) ? [] : [take(n)(xs), ...chunk (n) (drop (n) (xs))];
+function stringtoRupiah( n ) {
+		
+    var string = n.toString(), units, tens, scales, start, end, 
+    chunks, chunksLen, chunk, ints, i, word, words, rupiah = 'rupiah';
 
-// numToWords :: (Number a, String a) => a -> String
-let numToWords = n => {
-  
-  let a = [
-    '', 'Satu', 'Dua', 'Tiga', 'Empat',
-    'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan',
-    'Sepuluh', 'sebelas','dua belas ','tiga belas ',
-    'empat belas ','lima belas ','enam belas ','tujuh belas ',
-    'delapan belas ','sembilan belas '
-  ];
-  
-  let b = [
-    '', '', 'dua puluh','tiga puluh','empat puluh',
-    'lima puluh', 'enam puluh','tujuh puluh',
-    'delapan puluh','sembilan puluh'
-  ];
-  
-  let g = [
-    '', 'ribu', 'juta', 'milliar', 'trilliun', 'quadrillion',
-    'quintillion', 'sextillion', 'septillion', 'octillion', 'nonillion'
-  ];
-  
-  // this part is really nasty still
-  // it might edit this again later to show how Monoids could fix this up
-  let makeGroup = ([ones,tens,huns]) => {
-    return [
-      num(huns) === 0 ? '' : a[huns] + ' ratus ',
-      num(ones) === 0 ? b[tens] : b[tens] && b[tens] + '-' || '',
-      a[tens+ones] || a[ones]
-    ].join('');
-  };
-  
-  let thousand = (group,i) => group === '' ? group : `${group} ${g[i]}`;
-  
-  if (typeof n === 'number')
-    return numToWords(String(n));
-  else if (n === '0')
-    return 'zero';
-  else
-    return comp (chunk(3)) (reverse) (arr(n))
-      .map(makeGroup)
-      .map(thousand)
-      .filter(comp(not)(isEmpty))
-      .reverse()
-      .join(' ');
-};
+	/* Hapus spasi dan koma */
+	string = string.replace(/[, ]/g,"");
 
-console.log(numToWords(15550) + " rupiah");
+	/* Jika angka 0 */
+	if( parseInt( string ) === 0 ) {
+		return 'Nol';
+	}
+	
+	/* Angka Satuan */
+	units = [ '', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan',
+    'Sepuluh', 'Sebelas','Dua Belas ','Tiga Belas ','Empat Belas ','Lima Belas ','Enam Belas ','Tujuh Belas ',
+    'Delapan Belas ','Sembilan Belas '
+  ];
+	
+	/* Angka Puluhan */
+    tens = [ '', '', 'Dua Puluh', 'Tiga Puluh', 'Empat Puluh', 'Lima Puluh', 'Enam Puluh', 'Tujuh Puluh', 
+    'Delapan Puluh', 'Sembilan Puluh' ];
+	
+	/* Satuan Skala */
+    scales = [ '', 'ribu', 'juta', 'milliar', 'trilliun'];
+	
+	/* membagi inputan menjadi 3 digit */
+	start = string.length;
+	chunks = [];
+	while( start > 0 ) {
+		end = start;
+		chunks.push( string.slice( ( start = Math.max( 0, start - 3 ) ), end ) );
+	}
+	
+	/* Memeriksa jika fungsi memiliki satuan skala yang cukup untuk dapat merumuskan inputan pengguna  */
+	chunksLen = chunks.length;
+	if( chunksLen > scales.length ) {
+		return '';
+	}
+	
+	/* menentukan bilangan bulat pada setiap digit */
+	words = [];
+	for( i = 0; i < chunksLen; i++ ) {
+		
+		chunk = parseInt( chunks[i] );
+		
+		if( chunk ) {
+			
+			/* membagi digit menjadi array bilangan bulat */
+			ints = chunks[i].split( '' ).reverse().map( parseFloat );
+		
+			/* menambahkan puluhan */
+			if( ints[1] === 1 ) {
+				ints[0] += 10;
+			}
+			
+            /* Tambahkan satuan skala jika digit tidak kosong dan memenuhi kondisi array */
+			if( ( word = scales[i] ) ) {
+				words.push( word );
+			}
+			
+			/* Tambahkan kata satuan */
+			if( ( word = units[ ints[0] ] ) ) {
+				words.push( word );
+			}
+			
+			/* Tambahkan kata puluhan */
+			if( ( word = tens[ ints[1] ] ) ) {
+				words.push( word );
+			}
+			/* tambahkan kata rupiah setelah satuan atau puluhan */
+			if( ints[0] || ints[1] ) {	
+				/* tambahkan kata rupiah jika angkanya ratusan dst atau angka pertama */
+				if( ints[2] || (i + 1) > chunksLen ) {
+					words.push( rupiah );
+				}
+			}
+			/* tambahkan satuan ratus jika memenuhi kondisi */
+			if( ( word = units[ ints[2] ] ) ) {
+				words.push( word + ' Ratus' );
+			}	
+		}	
+	}
+    return words.reverse().join( ' ' );
+}
+
+// - - - - - Output - - - - - -
+function figure(val) {
+  finalFig = stringtoRupiah(val);
+  document.getElementById("words").innerHTML = finalFig + " Rupiah";
+}
