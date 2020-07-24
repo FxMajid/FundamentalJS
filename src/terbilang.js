@@ -1,7 +1,7 @@
-function stringtoRupiah( n ) {
+function stringtoRupiah( terbilang ) {
 		
-    var string = n.toString(), units, tens, scales, start, end, 
-    chunks, chunksLen, chunk, ints, i, word, words, rupiah = 'rupiah';
+    var string = terbilang.toString(), units, tens, scales, start, end, 
+    digits, digitsLen, digit, ints, i, word, words, rupiah = 'rupiah';
 
 	/* Hapus spasi dan koma */
 	string = string.replace(/[, ]/g,"");
@@ -26,28 +26,28 @@ function stringtoRupiah( n ) {
 	
 	/* membagi inputan menjadi 3 digit */
 	start = string.length;
-	chunks = [];
+	digits = [];
 	while( start > 0 ) {
 		end = start;
-		chunks.push( string.slice( ( start = Math.max( 0, start - 3 ) ), end ) );
+		digits.push( string.slice( ( start = Math.max( 0, start - 3 ) ), end ) );
 	}
 	
 	/* Memeriksa jika fungsi memiliki satuan skala yang cukup untuk dapat merumuskan inputan pengguna  */
-	chunksLen = chunks.length;
-	if( chunksLen > scales.length ) {
+	digitsLen = digits.length;
+	if( digitsLen > scales.length ) {
 		return '';
 	}
 	
 	/* menentukan bilangan bulat pada setiap digit */
 	words = [];
-	for( i = 0; i < chunksLen; i++ ) {
+	for( i = 0; i < digitsLen; i++ ) {
 		
-		chunk = parseInt( chunks[i] );
+		digit = parseInt( digits[i] );
 		
-		if( chunk ) {
+		if( digit ) {
 			
 			/* membagi digit menjadi array bilangan bulat */
-			ints = chunks[i].split( '' ).reverse().map( parseFloat );
+			ints = digits[i].split( '' ).reverse().map( parseFloat );
 		
 			/* menambahkan puluhan */
 			if( ints[1] === 1 ) {
@@ -71,7 +71,7 @@ function stringtoRupiah( n ) {
 			/* tambahkan kata rupiah setelah satuan atau puluhan */
 			if( ints[0] || ints[1] ) {	
 				/* tambahkan kata rupiah jika angkanya ratusan dst atau angka pertama */
-				if( ints[2] || (i + 1) > chunksLen ) {
+				if( ints[2] || (i + 1) > digitsLen ) {
 					words.push( rupiah );
 				}
 			}

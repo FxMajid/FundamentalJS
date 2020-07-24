@@ -1,17 +1,16 @@
 //Siapkan dua pointer
-let check = (array, sum) => {
-    let hashMap = {},
-      results = [] //penampungan array
+let check = (pointer1, pointer2) => {
+    let hashMap = {}, array = [] //siapkan objek dan array
 
-        //inisialisasi dua variabel indeks untuk menemukan kandidat elemen dalam array.
-        for (let i = 0; i < array.length; i++){
-            if (hashMap[array[i]]){
-                results.push([hashMap[array[i]], array[i]])
+        //inisialisasi dua variabel indeks untuk menemukan kandidat.
+        for (let i = 0; i < pointer1.length; i++){
+            if (hashMap[pointer1[i]]){
+                array.push([hashMap[pointer1[i]], pointer1[i]])
             }else{
-                hashMap[sum - array[i]] = array[i];
+                hashMap[pointer2 - pointer1[i]] = pointer1[i];
             }
           }
-          return results;
+          return array;
     }
 
 //output
